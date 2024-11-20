@@ -1,0 +1,144 @@
+# Base URL for the API
+@endpoint=http://localhost:3000/yoga-studio-management-api/v1/classes
+
+# 1. POST - Create a Valid Class
+# @name postValidClass 
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "instructorId": "6715857e71fab052665e862f",
+  "description": "Intermediate Vinyasa class focusing on flexibility.",
+  "classLocationId": "67152f7ad390614ec5cc9633",
+  "date": "2024-12-01",
+  "startTime": "10:00",
+  "endTime": "11:30",
+  "level": ["Intermediate"],
+  "type": ["Vinyasa", "Hatha"],
+  "category": ["Flexibility", "Strength"],
+  "classFormat": "Both",
+  "spacesAvailable": 20
+}
+###
+@ClassID = {{postValidClass.response.headers.location}}
+
+# 2. POST - Create Class with Missing Required Fields
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "instructorId": "6715857e71fab052665e862f",
+  "date": "2024-12-01"
+}
+###
+
+# 3. POST - Create Class with Invalid Data
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "instructorId": "invalidObjectId",
+  "description": "Yoga for flexibility.",
+  "classLocationId": "invalidObjectId",
+  "date": "not-a-date",
+  "startTime": "25:00",
+  "endTime": "24:00",
+  "spacesAvailable": -5
+}
+###
+
+# 4. GET - Retrieve All Classes
+GET {{endpoint}} HTTP/1.1
+###
+
+# 5. GET - Retrieve Classes with Filters
+GET {{endpoint}}?filter={"instructorId":"6715857e71fab052665e862f","classLocationId":"67152f7ad390614ec5cc9633"} HTTP/1.1
+###
+
+# 6. GET - Retrieve Classes by Date Range
+GET {{endpoint}}?filter={"date":{"$gte":"2024-11-01","$lte":"2024-12-31"}} HTTP/1.1
+###
+
+# 7. GET - Retrieve Class by ID
+GET {{endpoint}}/{{ClassID}} HTTP/1.1
+###
+
+# 8. GET - Retrieve Classes with Pagination
+GET {{endpoint}}?page=1&pageSize=5 HTTP/1.1
+###
+
+# 9. PUT - Update Class (All Fields)
+PUT {{endpoint}}/{{ClassID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "instructorId": "67124d5ac3152211e9e8ecf2",
+  "description": "Updated Power Yoga session.",
+  "classLocationId": "673bb9ee38794facb74217af",
+  "date": "2024-12-15",
+  "startTime": "09:00",
+  "endTime": "10:30",
+  "level": ["Advanced"],
+  "type": ["Power Yoga"],
+  "category": ["Strength"],
+  "classFormat": "Location",
+  "spacesAvailable": 10
+}
+###
+
+# 10. PATCH - Update Class Description
+PATCH {{endpoint}}/{{ClassID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "Updated Morning Yoga Flow"
+}
+###
+
+# 11. PATCH - Update Class Time
+PATCH {{endpoint}}/{{ClassID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "startTime": "07:30",
+  "endTime": "09:00"
+}
+###
+
+# 12. GET - Retrieve Classes for an Instructor
+GET {{endpoint}}?filter={"instructorId":"67124d5ac3152211e9e8ecf2"} HTTP/1.1
+###
+
+# 13. GET - Retrieve Classes for a Location
+GET {{endpoint}}?filter={"classLocationId":"673bb9ee38794facb74217af"} HTTP/1.1
+###
+
+# 14. DELETE - Delete Class by ID
+DELETE {{endpoint}}/{{ClassID}} HTTP/1.1
+###
+
+# 15. DELETE - Attempt to Delete Non-Existent Class
+DELETE {{endpoint}}/nonexistentID123 HTTP/1.1
+###
+
+# 16. PATCH - Attempt Invalid Class ID Format
+PATCH {{endpoint}}/invalidID HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "This will fail due to invalid ID format"
+}
+###
+
+# 17. PATCH - Update Class Location ID
+PATCH {{endpoint}}/{{ClassID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "classLocationId": "67152f7ad390614ec5cc9633"
+}
+###
+
+# 18. GET - Retrieve Classes with Optimised Filters and Pagination
+GET {{endpoint}}?filter={"instructorId":"67124d5ac3152211e9e8ecf2","classLocationId":"67152f7ad390614ec5cc9633","level":"Intermediate"}&page=1&pageSize=10 HTTP/1.1
+###

@@ -1,0 +1,366 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Yoga Studio Management API
+  description: A simple REST API for managing instructors, class locations, and yoga classes.
+servers:
+  - url: https://your-yoga-api.onrender.com
+    description: Demo server
+paths:
+  /instructors:
+    get:
+      summary: Get all instructors
+      description: Retrieves a list of all instructors.
+      tags:
+        - Instructors
+      responses:
+        '200':
+          description: A list of instructors.
+        '500':
+          description: Internal server error.
+    post:
+      summary: Create a new instructor
+      description: Creates a new instructor.
+      tags:
+        - Instructors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instructor'
+      responses:
+        '201':
+          description: Instructor created successfully.
+        '400':
+          description: Invalid input.
+        '500':
+          description: Internal server error.
+
+  /instructors/{id}:
+    get:
+      summary: Get an instructor by ID
+      description: Retrieves a specific instructor by their ID.
+      tags:
+        - Instructors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the instructor.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Instructor details.
+        '404':
+          description: Instructor not found.
+        '500':
+          description: Internal server error.
+    put:
+      summary: Update an instructor
+      description: Updates an existing instructor by their ID.
+      tags:
+        - Instructors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instructor'
+      responses:
+        '200':
+          description: Instructor updated successfully.
+        '400':
+          description: Invalid input.
+        '404':
+          description: Instructor not found.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete an instructor
+      description: Deletes an instructor by their ID.
+      tags:
+        - Instructors
+      responses:
+        '202':
+          description: Instructor deleted successfully.
+        '404':
+          description: Instructor not found.
+        '500':
+          description: Internal server error.
+
+  /classlocations:
+    get:
+      summary: Get all class locations
+      description: Retrieves all class locations.
+      tags:
+        - Class Locations
+      responses:
+        '200':
+          description: A list of class locations.
+        '500':
+          description: Internal server error.
+    post:
+      summary: Create a new class location
+      description: Creates a new class location.
+      tags:
+        - Class Locations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassLocation'
+      responses:
+        '201':
+          description: Class location created successfully.
+        '400':
+          description: Invalid input.
+        '500':
+          description: Internal server error.
+
+  /classlocations/{id}:
+    get:
+      summary: Get a class location by ID
+      description: Retrieves a specific class location by its ID.
+      tags:
+        - Class Locations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the class location.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Class location details.
+        '404':
+          description: Class location not found.
+        '500':
+          description: Internal server error.
+    put:
+      summary: Update a class location
+      description: Updates an existing class location by its ID.
+      tags:
+        - Class Locations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassLocation'
+      responses:
+        '200':
+          description: Class location updated successfully.
+        '400':
+          description: Invalid input.
+        '404':
+          description: Class location not found.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete a class location
+      description: Deletes a class location by its ID.
+      tags:
+        - Class Locations
+      responses:
+        '202':
+          description: Class location deleted successfully.
+        '404':
+          description: Class location not found.
+        '500':
+          description: Internal server error.
+
+  /classes:
+    get:
+      summary: Get all yoga classes
+      description: Retrieves a list of all yoga classes.
+      tags:
+        - Classes
+      responses:
+        '200':
+          description: A list of yoga classes.
+        '500':
+          description: Internal server error.
+    post:
+      summary: Create a new yoga class
+      description: Creates a new yoga class.
+      tags:
+        - Classes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Class'
+      responses:
+        '201':
+          description: Class created successfully.
+        '400':
+          description: Invalid input.
+        '500':
+          description: Internal server error.
+
+  /classes/{id}:
+    get:
+      summary: Get a class by ID
+      description: Retrieves a specific yoga class by its ID.
+      tags:
+        - Classes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the class.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Class details.
+        '404':
+          description: Class not found.
+        '500':
+          description: Internal server error.
+    put:
+      summary: Update a yoga class
+      description: Updates an existing yoga class by its ID.
+      tags:
+        - Classes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Class'
+      responses:
+        '200':
+          description: Class updated successfully.
+        '400':
+          description: Invalid input.
+        '404':
+          description: Class not found.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete a yoga class
+      description: Deletes a yoga class by its ID.
+      tags:
+        - Classes
+      responses:
+        '202':
+          description: Class deleted successfully.
+        '404':
+          description: Class not found.
+        '500':
+          description: Internal server error.
+
+components:
+  schemas:
+    Instructor:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the instructor.
+        name:
+          type: string
+          description: The name of the instructor.
+        yogaSpecialities:
+          type: array
+          items:
+            type: string
+          description: The yoga specialities of the instructor.
+        email:
+          type: string
+          description: The email address of the instructor.
+      required:
+        - id
+        - name
+        - yogaSpecialities
+        - email
+
+    ClassLocation:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the class location.
+        name:
+          type: string
+          description: The name of the class location.
+        maxCapacity:
+          type: integer
+          description: The maximum capacity of the class location.
+        location:
+          type: string
+          description: The physical address of the class location.
+        classFormats:
+          type: array
+          items:
+            type: string
+          description: The formats (Location, Stream, Both) supported by the class location.
+      required:
+        - id
+        - name
+        - maxCapacity
+        - location
+        - classFormats
+
+    Class:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the class.
+        instructorId:
+          type: string
+          description: The ID of the instructor leading the class.
+        description:
+          type: string
+          description: A description of the class.
+        classLocationId:
+          type: string
+          description: The ID of the class location.
+        date:
+          type: string
+          description: The date of the class (dd-mm-yyyy format).
+        startTime:
+          type: string
+          description: The start time of the class (24-hour format).
+        endTime:
+          type: string
+          description: The end time of the class (24-hour format).
+        level:
+          type: array
+          items:
+            type: string
+          description: The level of the class (e.g., Beginner, Intermediate, Advanced).
+        type:
+          type: array
+          items:
+            type: string
+          description: The types of yoga covered in the class (e.g., Vinyasa, Hatha).
+        category:
+          type: array
+          items:
+            type: string
+          description: The class focus areas (e.g., Flexibility, Strength).
+        classFormat:
+          type: string
+          description: The format of the class (e.g., Location, Stream, Both).
+        spacesAvailable:
+          type: integer
+          description: The number of available spaces for the class.
+      required:
+        - instructorId
+        - description
+        - classLocationId
+        - date
+        - startTime
+        - endTime
+        - level
+        - type
+        - classFormat
+        - spacesAvailable

@@ -1,0 +1,202 @@
+# Base URL for the API
+@endpoint=http://localhost:3000/yoga-studio-management-api/v1/instructors
+
+# 1. POST - Create an Instructor (Invalid Email)
+# @name postAnInstructorInvalidEmail
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Rois Shannon",
+  "yogaSpecialities": ["Hatha", "Vinyasa"],
+  "email": "invalid-email" 
+}
+###
+# Expected Result: Validation failure, HTTP 400
+
+# 2. POST - Create an Instructor (Empty Yoga Specialities)
+# @name postAnInstructorWithEmptyYogaSpecialities
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Alice Smith",
+  "yogaSpecialities": [],
+  "email": "alice.smith@example.com"
+}
+###
+# Expected Result: Validation failure, HTTP 400
+
+# 3. POST - Create an Instructor (Invalid Yoga Speciality)
+# @name postAnInstructorWithInvalidYogaSpeciality
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "yogaSpecialities": ["InvalidYogaType"],
+  "email": "jane.doe@example.com"
+}
+###
+# Expected Result: Validation failure, HTTP 400
+
+# 4. POST - Create a Valid Instructor (Success)
+# @name postValidInstructor
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "yogaSpecialities": ["Ashtanga", "Bikram"],
+  "email": "john.doe@example.com"
+}
+###
+# Expected Result: HTTP 201 with Instructor ID in response headers
+# Capture the location header from the response to get the ID of the newly created instructor
+@InstructorID = {{postValidInstructor.response.headers.location}}
+
+# 5. GET - Retrieve Instructor by ID (Using InstructorID from POST response)
+GET {{endpoint}}/{{InstructorID}} HTTP/1.1
+###
+# Expected Result: HTTP 200 with instructor details and associated classes
+
+# 6. GET - Retrieve All Instructors
+# @name GetAllInstructors
+GET {{endpoint}} HTTP/1.1
+Content-Type: application/json
+###
+# Expected Result: HTTP 200 with a list of all instructors
+
+# 7. PUT - Update an Instructor Completely (Invalid Instructor ID)
+# @name putInvalidInstructorID
+PUT {{endpoint}}/invalid-id HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "yogaSpecialities": ["Restorative"],
+  "email": "updated.email@example.com",
+  "classIds": []
+}
+###
+# Expected Result: HTTP 400 with "Invalid instructor ID format" error
+
+# 8. PUT - Update an Instructor Completely (Success)
+# @name putValidInstructorUpdate
+PUT {{endpoint}}/{{InstructorID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Updated John Doe",
+  "yogaSpecialities": ["Kundalini", "Power Yoga"],
+  "email": "updated.john.doe@example.com",
+  "classIds": []
+}
+###
+# Expected Result: HTTP 200 with "Successfully updated instructor" message
+
+# 8. PUT - Update an Instructor Completely invalid field
+# @name putValidInstructorUpdate
+PUT {{endpoint}}/{{InstructorID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Updated John Doe",
+  "yogaSpecialities": ["Kundalini", "Power Yoga"],
+  "email": "updated.john.doe@example.com",
+  "classIds": [],
+  "invalidField": "uh-oh"
+}
+###
+
+# 9. PATCH - Update an Instructor Partially (Update Yoga Specialities)
+# @name patchUpdateInstructorYogaSpecialities
+PATCH {{endpoint}}/{{InstructorID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "yogaSpecialities": ["Hatha", "Vinyasa", "Restorative"]
+}
+###
+# Expected Result: HTTP 200 with "Successfully updated instructor" message
+
+# 10. PATCH - Update an Instructor Partially (Invalid Field)
+# @name patchUpdateInstructorInvalidField
+PATCH {{endpoint}}/{{InstructorID}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "unknownField": "Invalid Update",
+  "email": "invalidpatch@example.com"
+}
+###
+
+# 11. DELETE - Delete Instructor by ID (Using InstructorID captured from POST request)
+DELETE {{endpoint}}/{{InstructorID}} HTTP/1.1
+Content-Type: application/json
+###
+# Expected Result: HTTP 202 with "Successfully removed instructor"
+
+# 12. POST - Create Another Instructor
+# @name postAnotherInstructor
+POST {{endpoint}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "yogaSpecialities": ["Vinyasa", "Restorative"],
+  "email": "jane.doe@example.com"
+}
+###
+# Capture the new instructor ID from the response location header (direct ObjectId)
+@AnotherInstructorID = {{postAnotherInstructor.response.headers.location}}
+
+# 13. GET - Retrieve Another Instructor by ID (Using AnotherInstructorID)
+# @name GetAnotherInstructorByID
+GET {{endpoint}}/{{AnotherInstructorID}} HTTP/1.1
+###
+# Expected Result: HTTP 200 with instructor details
+
+# 14. GET - Retrieve all instructors with yoga specialities "Vinyasa"
+# @name GetFilteredInstructorsWithVinyasa
+GET {{endpoint}}?filter={"yogaSpecialities":"Vinyasa"} HTTP/1.1
+###
+# Expected Result: HTTP 200 with instructors specializing in "Vinyasa"
+
+# 15. GET - Retrieve paginated instructors (Page 2, PageSize 5)
+# @name GetPaginatedInstructors
+GET {{endpoint}}?page=2&pageSize=5 HTTP/1.1
+Content-Type: application/json
+###
+# Expected Result: HTTP 200 with a subset of instructors based on pagination
+
+# 16. GET - Retrieve Instructor with Associated Classes
+# @name GetInstructorWithClasses
+GET {{endpoint}}/673b81982ffa0fbbc33f94a5 HTTP/1.1
+###
+# Expected Result: HTTP 200 with instructor details and associated classes (if any exist)
+
+# 17. DELETE - Delete Another Instructor by ID
+# @name DeleteAnotherInstructor
+DELETE {{endpoint}}/{{AnotherInstructorID}} HTTP/1.1
+Content-Type: application/json
+###
+# Expected Result: HTTP 202 with "Successfully removed instructor"
+
+# 18. GET - Try to Retrieve a Deleted Instructor
+# @name GetDeletedInstructor
+GET {{endpoint}}/{{AnotherInstructorID}} HTTP/1.1
+###
+# Expected Result: HTTP 404 with "No instructor found" error
+
+
+# 19. GET - Retrieve all instructors with yoga specialities "Hatha" and "Vinyasa" (both required)
+# @name GetInstructorsWithOnlyHathaAndVinyasa
+GET {{endpoint}}?filter={"yogaSpecialities":{"$all":["Hatha","Vinyasa"],"$size":2}}
+###
+
+# 20. GET - Retrieve all instructors with yoga specialities "Hatha" or "Vinyasa" (either allowed)
+# @name GetInstructorsWithEitherHathaOrVinyasa
+GET {{endpoint}}?filter={"yogaSpecialities":{"$in":["Hatha","Vinyasa"]}}
+###
+
